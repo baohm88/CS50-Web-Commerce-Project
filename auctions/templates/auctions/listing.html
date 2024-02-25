@@ -1,0 +1,125 @@
+{% extends "auctions/layout.html" %} 
+
+{% block body %}
+
+<!-- Display congratulation msg to auction winner -->
+    {% if not listing.is_active and user == listing.price.author %}
+        <div class="alert alert-success alert-dismissible fade show">
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <strong>Congratulations!</strong>You've won the auction for <strong>{{ listing.title}}</strong>.
+        </div>
+    {% endif %}
+
+<!-- Watchlist Button-->
+<div class="container">
+    {% if user.is_authenticated and listing.is_active %}
+        <!-- Close Auction Btn -->
+        {% if is_owner %}
+            <a class="btn btn-danger btn-sm" href="{% url 'closelisting' listing.id %}">Close Listing</a>
+        {% endif %}
+
+        <!-- Add/Remove Watchlist Btn -->
+        {% if is_listing_in_watchlist %}
+            <a class="btn btn-warning btn-sm" href="{% url 'removewatchlist' listing.id %}">Remove from Watchlist</a>
+        {% else %}
+            <a class="btn btn-primary btn-sm" href="{% url 'addwatchlist' listing.id %}">Add to Watchlist</a>
+        {% endif %}
+    {% endif %}
+</div>
+
+<!-- Listing Details -->
+<div class="row">
+    <div class="col-sm-4 p-3 ">
+        <img src="{{ listing.img_url }}" alt="{{ listing.title }}" width="231px"></div>
+    <div class="col-sm-8 p-3 ">
+    <h3>{{ listing.title }}</h3>
+    <ul>
+        <li><strong>Listed by:</strong> {{ listing.owner.username }} on {{listing.date_created |date:"F d, Y" }}</li>
+        <li><strong>Current bid:</strong> ${{ listing.price.bid }}</li>
+        <li><strong>Category:</strong> {{ listing.category }}</li>
+        <li><strong>Description price:</strong> {{ listing.description }}</li>
+    </ul>  
+    </div>
+</div>
+<hr>
+
+{% if user.is_authenticated and listing.is_active %}
+
+{% if not is_owner %}
+<!-- Bid -->
+<div class="container">
+    <h4>Bid</h4>
+    <!-- Bid status notification -->
+    <div class="container">
+        {% if message %}
+            {% if update %}
+                <div class="alert alert-success alert-dismissible fade show">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    {{ message }}
+                </div>
+            {% else %}
+                <div class="alert alert-danger alert-dismissible fade show">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    {{ message }}
+                </div>
+            {% endif %}
+        {% endif %}
+    </div>
+
+    <form action="{% url 'addbid' listing.id %}" method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="bid"><strong>Enter your bid (optional):</strong></label>
+            <input
+                type="number"
+                class="form-control"
+                id="bid"
+                step="0.01"
+                placeholder="Your bid must be greater than the bid above."
+                name="bid"
+                min="0"
+            />
+        </div>
+        <button type="submit" class="btn btn-primary btn-sm">Place Your Bid</button>
+    </form>
+    <hr>
+</div>
+{% endif %}
+
+<!-- Comments -->
+<div class="container">
+    <h4>Comments and Questions</h4>
+        <form action="{% url 'addcomment' listing.id %}" method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                <textarea
+                    class="form-control"
+                    rows="3"
+                    id="message"
+                    name="message"
+                    placeholder="Leave a comment or ask questions about the listing"
+                ></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-sm">Save Your Comments</button>
+        </form>
+<hr>
+
+<div class="container mt-3">
+    {% for comment in comments %}
+        <article class="media content-section">
+            <img class="rounded-circle article-img" src="">
+            <div class="media-body">
+                <div class="article-metadata">
+                    <small class="text-muted"> Posted by <strong>{{ comment.author }}</strong> | {{ comment.date_posted|date:"F d, Y" }}</small>
+            </div>
+            <p class="article-content">{{ comment.message }}</p>
+        </div>
+        </article>
+        <hr>
+    {% empty %}
+        <p>Currently, there is no questions or comments on this listing.</p>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,58 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>{% block title %}Auctions{% endblock %}</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        <link href="{% static 'auctions/styles.css' %}" rel="stylesheet">
+    </head>
+    <body>
+        <h1>Auctions</h1>
+        <div>
+            <!-- display msg if usr is authenticated -->
+            {% if user.is_authenticated %}
+                Signed in as <strong>{{ user.username }}</strong>.
+            {% else %}
+                Not signed in.
+            {% endif %}
+        </div>
+        <ul class="nav">
+            
+            <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Active Listings</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'closedlistings' %}">Closed Listings</a></li>
+
+            <!-- Display Logout route if usr is authenticated -->
+            {% if user.is_authenticated %}
+                <li class="nav-item"><a class="nav-link" href="{% url 'watchlist' %}">Watchlist <span class="badge bg-dark">{{ user.listingwatchlist.count }}</span></a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'create' %}">Creat Listing</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Log Out</a></li>
+            {% else %}
+
+                <!-- Display Login if usr not authenticated -->
+                <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Log In</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">Register</a></li>
+            {% endif %}
+        </ul>
+        <hr>
+        <!-- Block Body -->
+        <div class="container">
+            {% block body %}
+            {% endblock %}
+        </div>
+        
+        <div class="container">
+            <footer class="py-3 my-4">
+                <ul class="nav justify-content-center border-bottom pb-3 mb-3">
+                </ul>
+                <p class="text-center text-body-secondary"><small><strong>This is CS50 </strong><a href="https://cs50.harvard.edu/web/2020/">CS50’s Web Programming with Python and JavaScript</a></small></p>
+            </footer>
+        </div>
+
+
+</body>
+
+
+</html>

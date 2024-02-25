@@ -1,0 +1,80 @@
+{% extends "auctions/layout.html" %} {% block body %}
+
+<div class="row">
+<div class="col-sm-5">
+
+    <h2>Create Listing</h2>
+
+<form action="{% url 'create' %}" method="post">
+    {% csrf_token %}
+
+    <!-- Title -->
+    <div class="mb-3 mt-3">
+        <label for="title" class="form-label"
+            >Item you want to sell (required):</label
+        >
+        <input
+            type="text"
+            class="form-control"
+            id="title"
+            placeholder="Enter Title"
+            name="title"
+        />
+    </div>
+
+    <!-- Description -->
+    <div class="mb-3">
+        <label for="description">Description (required):</label>
+        <textarea
+            class="form-control"
+            rows="3"
+            id="description"
+            name="description"
+            placeholder="Enter Description of Your Item"
+        ></textarea>
+    </div>
+
+    <!-- Image URL -->
+    <div class="mb-3">
+        <label for="img_url">Image (URL to your item) (required):</label>
+        <input
+            type="text"
+            class="form-control"
+            id="img_url"
+            placeholder="Enter Image URL"
+            name="img_url"
+        />
+    </div>
+
+    <!-- Category -->
+    <div class="mb-3">
+        <label for="category">Category (required):</label>
+        <select name="category">
+            <option selected disabled>Select a category</option>
+            {% for category in categories %}
+            <option value="{{ category }}">{{ category }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <!-- Price -->
+    <div class="mb-3">
+        <label for="price">Price (required):</label>
+        <input
+            type="number"
+            class="form-control"
+            id="price"
+            placeholder="Enter Starting Bid"
+            name="price"
+            min="0"
+        />
+    </div>
+
+    <!-- Submit Btn -->
+    <button type="submit" class="btn btn-primary">Save Listing</button>
+</form>
+</div>
+</div>
+
+
+{% endblock %}
